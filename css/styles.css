@@ -1,0 +1,81 @@
+.container {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px, 20px;
+  background-color: #330535;
+  height: 50px;
+  color: #fff;
+}
+
+.navbar a {
+  color: #fff;
+  text-decoration: none;
+  margin-left: 20%;
+  margin-right: 20%;
+}
+
+.anime-container {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+  padding: 20px;
+}
+
+.animes {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  text-align: center;
+}
+
+.image-container {
+  width: 100%;
+  height: auto;
+  background-color: #ddd; /* placeholder for image */
+}
+
+.text-container {
+  padding: 10px;
+}
+
+.text-container h2 {
+  margin: 10px 0;
+  font-size: 18px;
+}
+
+.text-container p {
+  background-color: #330535;
+  color: white;
+  margin-bottom: 10px;
+}
+
+.home-page {
+  font-size: 24px;
+  text-decoration: none;
+  color: #fff;
+}
+
+.favorite-page {
+  text-decoration: none;
+  color: #fff;
+  font-size: 18px;
+}
+
+.space-between {
+  justify-content: space-between;
+}
+
+.row {
+  display: flex;
+}
+
+.title-color {
+  color: #ca62f0;
+}
