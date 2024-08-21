@@ -21,10 +21,10 @@
 }
 
 .anime-container {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 20px;
-  padding: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  flex-basis: 20%;
+  margin-left: 10px;
 }
 
 .animes {
