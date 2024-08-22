@@ -83,7 +83,7 @@ function swapView(anime: Anime): void {
   imageElement.innerHTML = `<img src="${anime.images.jpg.image_url}" alt="${anime.title}">`;
   ratingElement.textContent = `Rating: ${anime.rating ?? 'N/A'}`;
 
-  // Hide the anime container and show the detail view page
+  // Hide the anime container and show the detail view
   document.querySelector('.anime-container')?.classList.add('hidden');
   detailView.classList.remove('hidden');
 }
