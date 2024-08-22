@@ -9,6 +9,7 @@
   align-items: center;
   padding: 10px, 20px;
   background-color: #330535;
+  width: 100%;
   height: 50px;
   color: #fff;
 }
@@ -29,14 +30,16 @@
 }
 
 .animes {
+  width: 100%;
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   text-align: center;
-  flex-basis: 18%;
-  margin-top: 50px;
+  flex-basis: 40%;
+  margin-top: 25px;
   margin-left: 20px;
+  margin-bottom: 25px;
 }
 
 .image-container {
@@ -82,4 +85,19 @@
 
 .title-color {
   color: #ca62f0;
+}
+
+@media screen and (width >= 400px) {
+  .animes {
+    flex-basis: 18%;
+  }
+}
+
+.hidden {
+  display: none;
+}
+
+textarea {
+  width: 590px;
+  height: 400px;
 }
