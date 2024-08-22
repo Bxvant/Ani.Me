@@ -38,7 +38,7 @@ function renderAnime(anime) {
   animeDiv.appendChild(textDiv);
   return animeDiv;
 }
-// SWAPS THE VIEW . im pretty sure idk it wasnt working for some reason but now it is
+// SWAPS THE VIEW
 function swapView(anime) {
   const detailView = document.querySelector('.detail-view');
   const titleElement = detailView.querySelector('.detail-title h1');
