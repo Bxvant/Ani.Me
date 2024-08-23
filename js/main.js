@@ -5,14 +5,16 @@ async function fetchAnime() {
     const response = await fetch('https://api.jikan.moe/v4/top/anime');
     if (!response.ok) throw new Error('Fetch for top anime failed!');
     const data = await response.json();
+    // Render and append each anime //
     data.data.forEach((anime) => {
-      animeContainer.appendChild(renderAnime(anime));
+      const animeDiv = renderAnime(anime);
+      animeContainer.appendChild(animeDiv);
     });
   } catch (error) {
     console.error('Error fetching anime data:', error);
   }
 }
-// REnders the anime cards
+// Renders the anime cards
 function renderAnime(anime) {
   const animeDiv = document.createElement('div');
   animeDiv.classList.add('animes');
@@ -49,9 +51,9 @@ function swapView(anime) {
   synopsisElement.textContent = anime.synopsis;
   imageElement.innerHTML = `<img src="${anime.images.jpg.image_url}" alt="${anime.title}">`;
   ratingElement.textContent = `Rating: ${anime.rating ?? 'N/A'}`;
-  // Hide the anime container and show the detail view
+  // shows detail view, removes anime container view
   document.querySelector('.anime-container')?.classList.add('hidden');
   detailView.classList.remove('hidden');
 }
-// Start the process of fetching and rendering anime data
+// Start rendering anime data
 fetchAnime();
