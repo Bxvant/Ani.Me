@@ -14,20 +14,18 @@ interface Anime {
 const animeContainer = document.querySelector(
   '.anime-container',
 ) as HTMLDivElement;
+const detailView = document.querySelector('.detail-view') as HTMLDivElement;
 
-async function fetchAnime(): Promise<void> {
+// Fetch and render anime data
+async function fetchAnime(): Promise<Anime[]> {
   try {
     const response = await fetch('https://api.jikan.moe/v4/top/anime');
     if (!response.ok) throw new Error('Fetch for top anime failed!');
     const data = await response.json();
-
-    // Render and append each anime //
-    data.data.forEach((anime: Anime) => {
-      const animeDiv = renderAnime(anime);
-      animeContainer.appendChild(animeDiv);
-    });
+    return data.data as Anime[];
   } catch (error) {
     console.error('Error fetching anime data:', error);
+    return [];
   }
 }
 
@@ -35,6 +33,7 @@ async function fetchAnime(): Promise<void> {
 function renderAnime(anime: Anime): HTMLDivElement {
   const animeDiv = document.createElement('div');
   animeDiv.classList.add('animes');
+  animeDiv.dataset.id = anime.mal_id.toString(); // Add data attribute for identification
 
   const imageDiv = document.createElement('div');
   imageDiv.classList.add('image-container');
@@ -53,20 +52,14 @@ function renderAnime(anime: Anime): HTMLDivElement {
   textDiv.appendChild(title);
   textDiv.appendChild(episodes);
 
-  // Add an event listener to the title to swap views
-  title.addEventListener('click', () => {
-    swapView(anime);
-  });
-
   animeDiv.appendChild(imageDiv);
   animeDiv.appendChild(textDiv);
 
   return animeDiv;
 }
 
-// SWAPS THE VIEW
+// Swap to the detail view
 function swapView(anime: Anime): void {
-  const detailView = document.querySelector('.detail-view') as HTMLDivElement;
   const titleElement = detailView.querySelector(
     '.detail-title h1',
   ) as HTMLHeadingElement;
@@ -80,15 +73,55 @@ function swapView(anime: Anime): void {
     '.detail-rating h2',
   ) as HTMLHeadingElement;
 
+  // Update title
   titleElement.textContent = anime.title;
+
+  // Update synopsis
   synopsisElement.textContent = anime.synopsis;
-  imageElement.innerHTML = `<img src="${anime.images.jpg.image_url}" alt="${anime.title}">`;
+
+  // Update image
+  const img = document.createElement('img');
+  img.src = anime.images.jpg.image_url;
+  img.alt = anime.title;
+
+  // Clear existing children in imageElement and append new image
+  while (imageElement.firstChild) {
+    imageElement.removeChild(imageElement.firstChild);
+  }
+  imageElement.appendChild(img);
+
+  // Update rating
   ratingElement.textContent = `Rating: ${anime.rating ?? 'N/A'}`;
 
-  // shows detail view, removes anime container view
-  document.querySelector('.anime-container')?.classList.add('hidden');
+  // Show detail view and hide anime container
+  animeContainer.classList.add('hidden');
   detailView.classList.remove('hidden');
 }
 
-// Start rendering anime data
-fetchAnime();
+// starts the page
+async function init(): Promise<void> {
+  const animeList = await fetchAnime();
+
+  animeList.forEach((anime) => {
+    animeContainer.appendChild(renderAnime(anime));
+  });
+
+  // Event delegation
+  animeContainer.addEventListener('click', (event: Event) => {
+    const target = event.target as HTMLElement;
+    const animeDiv = target.closest('.animes') as HTMLDivElement;
+
+    if (animeDiv) {
+      const animeId = animeDiv.dataset.id;
+      const selectedAnime = animeList.find(
+        (a) => a.mal_id.toString() === animeId,
+      );
+
+      if (selectedAnime) {
+        swapView(selectedAnime);
+      }
+    }
+  });
+}
+
+init();
