@@ -15,6 +15,14 @@ const animeContainer = document.querySelector(
   '.anime-container',
 ) as HTMLDivElement;
 const detailView = document.querySelector('.detail-view') as HTMLDivElement;
+const favoritesContainer = document.querySelector(
+  '.favorites-container',
+) as HTMLDivElement;
+const favoritesLink = document.querySelector(
+  '.favorite-page-title',
+) as HTMLAnchorElement;
+
+let favorites: Anime[] = JSON.parse(localStorage.getItem('favorites') || '[]');
 
 // Fetch and render anime data
 async function fetchAnime(): Promise<Anime[]> {
@@ -58,6 +66,42 @@ function renderAnime(anime: Anime): HTMLDivElement {
   return animeDiv;
 }
 
+// Creates a star button with SVG icon
+function createStarButton(isFavorite: boolean): HTMLButtonElement {
+  const starButton = document.createElement('button');
+  starButton.classList.add('favorite-button');
+
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('width', '24');
+  svg.setAttribute('height', '24');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('stroke', 'black');
+  svg.setAttribute('stroke-width', '2');
+  svg.setAttribute('stroke-linecap', 'round');
+  svg.setAttribute('stroke-linejoin', 'round');
+
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute(
+    'd',
+    'M12 17.27L18.18 21 16.54 13.97 22 9.24 14.81 8.63 12 2 9.19 8.63 2 9.24 7.46 13.97 5.82 21z',
+  );
+  path.setAttribute('fill', isFavorite ? 'yellow' : 'none');
+  svg.appendChild(path);
+  starButton.appendChild(svg);
+
+  return starButton;
+}
+
+// Update the favorites list in localStorage
+function updateFavorites(anime: Anime): void {
+  if (favorites.some((fav) => fav.mal_id === anime.mal_id)) {
+    favorites = favorites.filter((fav) => fav.mal_id !== anime.mal_id);
+  } else {
+    favorites.push(anime);
+  }
+  localStorage.setItem('favorites', JSON.stringify(favorites));
+}
+
 // Swap to the detail view
 function swapView(anime: Anime): void {
   const titleElement = detailView.querySelector(
@@ -80,33 +124,57 @@ function swapView(anime: Anime): void {
   synopsisElement.textContent = anime.synopsis;
 
   // Update image
+  imageElement.innerHTML = ''; // Clear existing image
   const img = document.createElement('img');
   img.src = anime.images.jpg.image_url;
   img.alt = anime.title;
-
-  // Clear existing children in imageElement and append new image
-  while (imageElement.firstChild) {
-    imageElement.removeChild(imageElement.firstChild);
-  }
   imageElement.appendChild(img);
 
   // Update rating
   ratingElement.textContent = `Rating: ${anime.rating ?? 'N/A'}`;
+
+  // Add or Remove from Favorites button
+  const isFavorite = favorites.some((fav) => fav.mal_id === anime.mal_id);
+  const starButton = createStarButton(isFavorite);
+  starButton.addEventListener('click', () => {
+    updateFavorites(anime);
+    const isFavoriteNow = favorites.some((fav) => fav.mal_id === anime.mal_id);
+    starButton
+      .querySelector('path')!
+      .setAttribute('fill', isFavoriteNow ? 'yellow' : 'none');
+  });
+
+  // Append the star button
+  const detailRight = detailView.querySelector(
+    '.detail-right',
+  ) as HTMLDivElement;
+  detailRight.appendChild(starButton);
 
   // Show detail view and hide anime container
   animeContainer.classList.add('hidden');
   detailView.classList.remove('hidden');
 }
 
-// starts the page
+// Render the anime list or favorites list
+function renderList(animeList: Anime[], container: HTMLDivElement): void {
+  container.innerHTML = ''; // Clear existing content
+  animeList.forEach((anime) => {
+    container.appendChild(renderAnime(anime));
+  });
+}
+
+// Render favorites list
+function renderFavorites(): void {
+  renderList(favorites, favoritesContainer);
+}
+
+// Initialize the app
 async function init(): Promise<void> {
   const animeList = await fetchAnime();
 
-  animeList.forEach((anime) => {
-    animeContainer.appendChild(renderAnime(anime));
-  });
+  renderList(animeList, animeContainer);
 
-  // Event delegation
+  // Event delegation for animeContainer
   animeContainer.addEventListener('click', (event: Event) => {
     const target = event.target as HTMLElement;
     const animeDiv = target.closest('.animes') as HTMLDivElement;
@@ -121,6 +189,21 @@ async function init(): Promise<void> {
         swapView(selectedAnime);
       }
     }
+  });
+
+  // Event for favorites link
+  favoritesLink.addEventListener('click', () => {
+    animeContainer.classList.add('hidden');
+    detailView.classList.add('hidden');
+    favoritesContainer.classList.remove('hidden');
+    renderFavorites();
+  });
+
+  // Event for back to main page
+  document.querySelector('.home-page')?.addEventListener('click', () => {
+    favoritesContainer.classList.add('hidden');
+    detailView.classList.add('hidden');
+    animeContainer.classList.remove('hidden');
   });
 }
 
