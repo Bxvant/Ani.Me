@@ -93,10 +93,6 @@
   }
 }
 
-.hidden {
-  display: none;
-}
-
 .detail-view {
   display: flex;
   justify-content: space-between;
@@ -138,3 +134,7 @@
 }
 
 /* might change background color for detailed view in future */
+
+.hidden {
+  display: none;
+}

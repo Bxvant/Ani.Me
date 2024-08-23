@@ -34,7 +34,7 @@ async function fetchAnime(): Promise<Anime[]> {
   } catch (error) {
     console.error('Error fetching anime data:', error);
     return [];
-  }
+  } // will change to type void so it doesnt need a return.
 }
 
 // Renders the anime cards
@@ -190,7 +190,6 @@ async function init(): Promise<void> {
       }
     }
   });
-
   // Event for favorites link
   favoritesLink.addEventListener('click', () => {
     animeContainer.classList.add('hidden');

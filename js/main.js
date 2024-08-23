@@ -14,7 +14,7 @@ async function fetchAnime() {
   } catch (error) {
     console.error('Error fetching anime data:', error);
     return [];
-  }
+  } // will change to type void so it doesnt need a return.
 }
 // Renders the anime cards
 function renderAnime(anime) {
