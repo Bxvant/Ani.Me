@@ -5,4 +5,5 @@ HibachiHolic is a Full-Stack , user friendly website aimed at hungry customers l
 <hr/>
 
 # How to Use
+<hr/>
 
